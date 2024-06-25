@@ -1,5 +1,11 @@
 import { useState } from 'react'
 
+const Button = (props) => {
+  return (
+    <button>{props.name}</button>
+  )
+}
+
 function App() {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
