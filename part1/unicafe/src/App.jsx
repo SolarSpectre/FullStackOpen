@@ -9,9 +9,16 @@ const Button = ({ name, counter, setValue }) => {
   );
 };
 
-const Statistics = ({ name, counter }) => {
+const Statistics = ({ good, neutral, bad, all, average, positive }) => {
   return (
-    <p>{name} {counter}</p>
+    <div>
+      <p>good {good}</p>
+      <p>neutral {neutral}</p>
+      <p>bad {bad}</p>
+      <p>all {all}</p>
+      <p>average {average}</p>
+      <p>positive {positive}%</p>
+    </div>
   );
 };
 
@@ -22,6 +29,7 @@ function App() {
   const all = good + neutral + bad;
   const average = all > 0 ? (good - bad) / all : 0;
   const positive = all > 0 ? (good / all) * 100 : 0;
+
   return (
     <div>
       <h1>Give feedback</h1>
@@ -29,16 +37,20 @@ function App() {
       <Button name="neutral" counter={neutral} setValue={setNeutral} />
       <Button name="bad" counter={bad} setValue={setBad} />
       <h1>Statistics</h1>
-      <Statistics name="good" counter={good} />
-      <Statistics name="neutral" counter={neutral} />
-      <Statistics name="bad" counter={bad} />
-      
-      <p>all {all}</p>
-      <p>average {average}</p>
-      <p>positive {positive}%</p>
+      {all > 0 ?(
+      <Statistics 
+        good={good} 
+        neutral={neutral} 
+        bad={bad} 
+        all={all} 
+        average={average} 
+        positive={positive} 
+      />
+      ) : (
+        <p>No feedback given</p>
+      )}
     </div>
   );
 }
 
 export default App;
-
