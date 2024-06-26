@@ -8,11 +8,15 @@ const Button = ({ name, counter, setValue }) => {
     <button onClick={handleClick}>{name}</button>
   );
 };
-const StatisticLine = ({stat, value}) =>{
-  return(
-    <p>{stat} {value}</p>
-  )
-}
+
+const StatisticLine = ({ stat, value }) => {
+  return (
+    <tr>
+      <td>{stat}</td>
+      <td>{value}</td>
+    </tr>
+  );
+};
 
 function App() {
   const [good, setGood] = useState(0);
@@ -30,14 +34,16 @@ function App() {
       <Button name="bad" counter={bad} setValue={setBad} />
       <h1>Statistics</h1>
       {all > 0 ? (
-        <div>
-          <StatisticLine stat="good" value={good} />
-          <StatisticLine stat="neutral" value={neutral} />
-          <StatisticLine stat="bad" value={bad} />
-          <StatisticLine stat="all" value={all} />
-          <StatisticLine stat="average" value={average} />
-          <StatisticLine stat="positive" value={`${positive}%`} />
-        </div>
+        <table>
+          <tbody>
+            <StatisticLine stat="good" value={good} />
+            <StatisticLine stat="neutral" value={neutral} />
+            <StatisticLine stat="bad" value={bad} />
+            <StatisticLine stat="all" value={all} />
+            <StatisticLine stat="average" value={average} />
+            <StatisticLine stat="positive" value={`${positive}%`} />
+          </tbody>
+        </table>
       ) : (
         <p>No feedback given</p>
       )}
