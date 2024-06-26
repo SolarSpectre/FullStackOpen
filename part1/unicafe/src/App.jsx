@@ -1,8 +1,17 @@
 import { useState } from 'react'
 
-const Button = (props) => {
+const Button = ({name,counter,setValue}) => {
+  const handleClick=()=>{
+    setValue(counter+1)
+  }
   return (
-    <button>{props.name}</button>
+    <button onClick={handleClick}>{name}</button>
+  )
+}
+
+const Statistics = ({name, counter}) =>{
+  return(
+    <p>{name} {counter}</p>
   )
 }
 
@@ -13,7 +22,14 @@ function App() {
 
   return (
     <div>
-      
+      <h1>Give feedback</h1>
+      <Button name="good" counter={good} setValue={setGood} />
+      <Button name="neutral" counter={neutral} setValue={setNeutral} />
+      <Button name="bad" counter={bad} setValue={setBad} />
+      <h1>Statistics</h1>
+      <Statistics name="good" counter={good}/>
+      <Statistics name="neutral" counter={neutral}/>
+      <Statistics name="bad" counter={bad}/>
     </div>
   )
 }
