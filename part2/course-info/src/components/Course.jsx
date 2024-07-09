@@ -17,7 +17,7 @@ export const Course = ({ courses }) => {
 const Header = ({ title }) => <h1>{title}</h1>;
 const Total = ({ parts }) => {
   const sum = parts.reduce((acc, part) => acc + part.exercises, 0);
-  return <p>total of {sum} exercises</p>;
+  return <strong>total of {sum} exercises</strong>;
 }
 const Part = ({ part }) => (
   <p>
