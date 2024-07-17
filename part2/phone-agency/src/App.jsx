@@ -1,41 +1,61 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
-  ]) 
-  const [newName, setNewName] = useState('')
-  const handleChange = (event) =>{
-    event.preventDefault();
-    setNewName(event.target.value)
-  }
-  const addPerson = (event) =>{
-    event.preventDefault()
-    const personObject={
-      name:newName
+    { 
+      name: 'Arto Hellas',
+      number: '040-1234567'
     }
-    setPersons(persons.concat(personObject))
-    setNewName('')
-  }
+  ]); 
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+
+  const handleNameChange = (event) => {
+    setNewName(event.target.value);
+  };
+
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value);
+  };
+
+  const addPerson = (event) => {
+    event.preventDefault();
+    const personObject = {
+      name: newName,
+      number: newNumber
+    };
+
+    if (persons.some(person => person.name === newName)) {
+      alert(`${personObject.name} is already added to phonebook`);
+    } else if (persons.some(person => person.number === newNumber)) {
+      alert(`${personObject.number} is already added to phonebook`);
+    } else {
+      setPersons(persons.concat(personObject));
+      setNewName('');
+      setNewNumber('');
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
+      <form onSubmit={addPerson}>
         <div>
-          name: <input onChange={handleChange}/>
+          name: <input value={newName} onChange={handleNameChange}/><br />
+          number: <input value={newNumber} onChange={handleNumberChange}/>
         </div>
         <div>
-          <button type="submit" onClick={addPerson}>add</button>
+          <button type="submit">add</button>
         </div>
       </form>
       <h2>Numbers</h2>
       <ul>
-        {persons.map( person =>
-          <li key={person.name}>{person.name}</li>
+        {persons.map(person =>
+          <li key={person.name + person.number}>{person.name} {person.number}</li>
         )}
       </ul>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
