@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import axios from 'axios';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [searchvalue, setSearchValue] = useState('');
+  const [country, setCountry] = useState(null);
+  const [error, setError] = useState(null);
+
+  const onSearch = (event) => {
+    event.preventDefault();
+    axios.get(`https://studies.cs.helsinki.fi/restcountries/api/name/${searchvalue}`)
+      .then(response => {
+        console.log(response.data)
+        setCountry(response.data); 
+        setError(null);
+      })
+      .catch(err => {
+        console.error(err);
+        setCountry(null);
+        setError("Country not found or an error occurred.");
+      });
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <p>Find countries</p>
+      <form onSubmit={onSearch}>
+        <input
+          type="text"
+          placeholder="Enter country name"
+          value={searchvalue}
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
+      {error && <p>{error}</p>}
+      {country && (
+        <div>
+          <h2><strong>{country.name.common}</strong></h2>
+          <p>Capital: {country.capital[0]}</p>
+          <p>Area: {country.area}</p>
+          <p>Languages:</p>
+          <ul>
+            {Object.values(country.languages).map((language, index) => (
+              <li key={index}>{language}</li>
+            ))}
+          </ul>
+            <img src={country.flags.png} height='100px' width='100px'/>
+        </div>
+      )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
