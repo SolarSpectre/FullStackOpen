@@ -1,68 +1,73 @@
 import { useState } from 'react';
 import axios from 'axios';
+import Country from './components/Country';
 
 function App() {
-  const [searchvalue, setSearchValue] = useState('');
-  const [country, setCountry] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [countries, setCountries] = useState([]);
   const [error, setError] = useState(null);
+  const [showDetails, setShowDetails] = useState({});
 
   const onSearch = (event) => {
-    event.preventDefault();
-    setSearchValue(event.target.value)
+    const value = event.target.value;
+    setSearchValue(value);
+
     axios.get(`https://studies.cs.helsinki.fi/restcountries/api/all/`)
       .then(response => {
-        console.log(response.data)
         const filteredCountries = response.data.filter(
-          country => country.name.common.toLowerCase().includes(event.target.value.toLowerCase())
+          country => country.name.common.toLowerCase().includes(value.toLowerCase())
         );
-        if(filteredCountries.length > 10){
-          setCountry([]); 
-          setError("Too many matches, specify more please");      
-        }else if(filteredCountries.length == 0){
-          setCountry([]); 
-          setError("Country not found or an error occured");
-        }else{
-          setCountry(filteredCountries);
+
+        if (filteredCountries.length > 10) {
+          setCountries([]);
+          setError("Too many matches, specify more please");
+        } else if (filteredCountries.length === 0) {
+          setCountries([]);
+          setError("Country not found or an error occurred.");
+        } else {
+          setCountries(filteredCountries);
           setError(null);
         }
       })
       .catch(err => {
         console.error(err);
-        setCountry([]);
+        setCountries([]);
         setError("Country not found or an error occurred.");
       });
+  };
+
+  const handleShow = (index) => {
+    setShowDetails((prev) => ({
+      ...prev,
+      [index]: !prev[index], // Toggle the specific country's show state
+    }));
   };
 
   return (
     <>
       <p>Find countries</p>
-        <input
-          type="text"
-          placeholder="Enter country name"
-          value={searchvalue}
-          onChange={(e) => onSearch(e)}
-        />
+      <input
+        type="text"
+        placeholder="Enter country name"
+        value={searchValue}
+        onChange={onSearch}
+      />
       {error && <p>{error}</p>}
-      {country.length > 1 && country.length <= 10 && (
+      {countries.length > 1 && countries.length <= 10 && (
         <ul>
-          {country.map((country,index)=>(
-          <li key={index}>{country.name.common}</li>
+          {countries.map((country, index) => (
+            <li key={index}>
+              {country.name.common} 
+              <button onClick={() => handleShow(index)}>
+                {showDetails[index] ? 'hide' : 'show'}
+              </button>
+              {showDetails[index] && <Country country={country} />}
+            </li>
           ))}
         </ul>
       )}
-      {country.length == 1 && (
-        <div>
-          <h2><strong>{country[0].name.common}</strong></h2>
-          <p>Capital: {country[0].capital[0]}</p>
-          <p>Area: {country[0].area}</p>
-          <p>Languages:</p>
-          <ul>
-            {Object.values(country[0].languages).map((language, index) => (
-              <li key={index}>{language}</li>
-            ))}
-          </ul>
-            <img src={country[0].flags.png} height='100px' width='100px'/>
-        </div>
+      {countries.length === 1 && (
+        <Country country={countries[0]} />
       )}
     </>
   );
