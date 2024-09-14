@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express()
+app.use(express.json());
 const now = new Date();
 
 const PORT = 3001
@@ -50,6 +51,28 @@ app.delete('/api/persons/:id', (request,response) => {
   notes = notes.filter(note => note.id !== id)
 
   response.status(204).end()
+})
+
+app.post('/api/persons', (request,response) => {
+  const id = Math.floor(Math.random()* 100) + 1;
+  const body = request.body
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: 'Name or Number Missing'
+    })
+  }
+  if (notes.some(note => note.name === body.name)) {
+    return response.status(400).json({
+      error: 'Name must be unique'
+    })
+  }
+  const note = {
+    name: body.name,
+    number: body.number,
+    id : id,
+  } 
+  notes = notes.concat(note);
+  response.json(note)
 })
 
 app.listen(PORT, () => {
