@@ -26,6 +26,12 @@ test("all blogs are returned", async () => {
   const response = await api.get("/api/blogs");
   assert.strictEqual(response.body.length, helper.initialBlogs.length);
 });
+test("id property exists", async () => {
+  const response = await api.get("/api/blogs");
+  response.body.forEach((blog) => {
+    assert.strictEqual(typeof blog.id, "string");
+  });
+});
 
 after(async () => {
   await mongoose.connection.close();
