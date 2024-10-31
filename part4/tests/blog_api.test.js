@@ -71,6 +71,18 @@ test("update a blog correctly", async () => {
 
   assert.strictEqual(blogAfterUpdate.likes, updatedBlogData.likes);
 });
+test("Doesn't create invalid users", async () => {
+  const body = {
+    username: "joseph",
+    name: "qwerty",
+    password: "12",
+  };
+  const response = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedBlogData)
+    .expect(400)
+    .expect("Content-Type", /application\/json/);
+});
 after(async () => {
   await mongoose.connection.close();
 });
