@@ -78,8 +78,8 @@ test("Doesn't create invalid users", async () => {
     password: "12",
   };
   const response = await api
-    .put(`/api/blogs/${blogToUpdate.id}`)
-    .send(updatedBlogData)
+    .post(`/api/users/`)
+    .send(body)
     .expect(400)
     .expect("Content-Type", /application\/json/);
 });
