@@ -7,8 +7,13 @@ const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
+  const [likes, setLikes] = useState(0);
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
@@ -47,6 +52,32 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogAppUser");
     setBlogs([]);
   };
+  const handleCreate = async (event) => {
+    event.preventDefault();
+
+    try {
+      const newBlog = {
+        title: title,
+        author: author,
+        url: url,
+        likes: likes,
+      };
+      await blogService.create(newBlog);
+      setSuccessMessage(`A new blog: ${title}, by ${author} has been created`);
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+      setLikes(0);
+    } catch (error) {
+      setErrorMessage("Error creating new blog");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  };
 
   const fetchBlogs = async () => {
     try {
@@ -72,6 +103,7 @@ const App = () => {
         <div>
           <h2>Log in to application</h2>
           {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+
           <form onSubmit={handleLogin}>
             <div>
               username
@@ -99,6 +131,46 @@ const App = () => {
           <h2>blogs</h2>
           <p>{user.username} is logged in</p>
           <button onClick={handleLogout}>Logout</button>
+          <h2>Create a new blog</h2>
+          {successMessage && (
+            <div style={{ color: "green" }}>{successMessage}</div>
+          )}
+          <form onSubmit={handleCreate}>
+            <div>
+              title:
+              <input
+                value={title}
+                name="title"
+                onChange={({ target }) => setTitle(target.value)}
+              />
+            </div>
+            <div>
+              author:
+              <input
+                value={author}
+                name="author"
+                onChange={({ target }) => setAuthor(target.value)}
+              />
+            </div>
+            <div>
+              url:
+              <input
+                value={url}
+                name="url"
+                onChange={({ target }) => setUrl(target.value)}
+              />
+            </div>
+            <div>
+              likes:
+              <input
+                value={likes}
+                name="likes"
+                onChange={({ target }) => setLikes(target.value)}
+              />
+            </div>
+
+            <button type="submit">Create</button>
+          </form>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
