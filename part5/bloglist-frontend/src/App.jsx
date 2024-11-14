@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
+import Togglable from "./components/Togglable";
+import BlogForm from "./components/CreateBlog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -14,7 +16,7 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-
+  const blogFormRef = useRef();
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
     if (loggedUserJSON) {
@@ -62,6 +64,7 @@ const App = () => {
         url: url,
         likes: likes,
       };
+      blogFormRef.current.toggleVisibility();
       await blogService.create(newBlog);
       setSuccessMessage(`A new blog: ${title}, by ${author} has been created`);
       setTimeout(() => {
@@ -131,46 +134,20 @@ const App = () => {
           <h2>blogs</h2>
           <p>{user.username} is logged in</p>
           <button onClick={handleLogout}>Logout</button>
-          <h2>Create a new blog</h2>
-          {successMessage && (
-            <div style={{ color: "green" }}>{successMessage}</div>
-          )}
-          <form onSubmit={handleCreate}>
-            <div>
-              title:
-              <input
-                value={title}
-                name="title"
-                onChange={({ target }) => setTitle(target.value)}
-              />
-            </div>
-            <div>
-              author:
-              <input
-                value={author}
-                name="author"
-                onChange={({ target }) => setAuthor(target.value)}
-              />
-            </div>
-            <div>
-              url:
-              <input
-                value={url}
-                name="url"
-                onChange={({ target }) => setUrl(target.value)}
-              />
-            </div>
-            <div>
-              likes:
-              <input
-                value={likes}
-                name="likes"
-                onChange={({ target }) => setLikes(target.value)}
-              />
-            </div>
-
-            <button type="submit">Create</button>
-          </form>
+          <Togglable buttonLabel="New Blog" ref={blogFormRef}>
+            <BlogForm
+              successMessage={successMessage}
+              handleCreate={handleCreate}
+              title={title}
+              author={author}
+              url={url}
+              setTitle={setTitle}
+              setAuthor={setAuthor}
+              setUrl={setUrl}
+              likes={likes}
+              setLikes={setLikes}
+            ></BlogForm>
+          </Togglable>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
