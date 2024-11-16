@@ -17,6 +17,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const blogFormRef = useRef();
+  const blogDetailRef = useRef();
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
     if (loggedUserJSON) {
@@ -82,6 +83,16 @@ const App = () => {
     }
   };
 
+  const handleUpdate = async (blog) => {
+    try {
+      const updatedBlog = { ...blog, likes: blog.likes + 1 };
+      await blogService.update(blog.id, updatedBlog);
+      setBlogs(blogs.map((b) => (b.id === blog.id ? updatedBlog : b)));
+    } catch (error) {
+      setErrorMessage("Error updating blog");
+      setTimeout(() => setErrorMessage(null), 5000);
+    }
+  };
   const fetchBlogs = async () => {
     try {
       const blogs = await blogService.getAll();
@@ -99,7 +110,13 @@ const App = () => {
       fetchBlogs();
     }
   }, [user]);
-
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: "solid",
+    borderWidth: 1,
+    marginBottom: 5,
+  };
   return (
     <div>
       {user === null ? (
@@ -148,9 +165,19 @@ const App = () => {
               setLikes={setLikes}
             ></BlogForm>
           </Togglable>
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
-          ))}
+          {[...blogs]
+            .sort((a, b) => b.likes - a.likes)
+            .map((blog) => (
+              <div style={blogStyle} key={blog.id}>
+                <Blog blog={blog} />
+                <Togglable buttonLabel="view">
+                  <p>{blog.url}</p>
+                  <p>{blog.likes}</p>
+                  <button onClick={() => handleUpdate(blog)}>like</button>
+                  <p>{user.name}</p>
+                </Togglable>
+              </div>
+            ))}
         </div>
       )}
     </div>
