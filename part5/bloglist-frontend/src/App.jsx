@@ -93,6 +93,18 @@ const App = () => {
       setTimeout(() => setErrorMessage(null), 5000);
     }
   };
+  const handleDelete = async (blog) => {
+    try {
+      if (window.confirm(`Remote blog ${blog.title} by ${blog.author}`)) {
+        await blogService.deleteBlog(blog.id);
+        fetchBlogs();
+      }
+    } catch (error) {
+      setErrorMessage(`Error deleting blog: ${error}`);
+      setTimeout(() => setErrorMessage(null), 5000);
+    }
+  };
+
   const fetchBlogs = async () => {
     try {
       const blogs = await blogService.getAll();
@@ -175,6 +187,7 @@ const App = () => {
                   <p>{blog.likes}</p>
                   <button onClick={() => handleUpdate(blog)}>like</button>
                   <p>{user.name}</p>
+                  <button onClick={() => handleDelete(blog)}>remove</button>
                 </Togglable>
               </div>
             ))}
