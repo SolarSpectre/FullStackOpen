@@ -13,13 +13,13 @@ const BlogForm = ({
   return (
     <>
       <h2>Create a new blog</h2>
-      {successMessage && <div style={{ color: "green" }}>{successMessage}</div>}
+      {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
       <form onSubmit={handleCreate}>
         <div>
           title:
           <input
             value={title}
-            name="title"
+            name='title'
             onChange={({ target }) => setTitle(target.value)}
           />
         </div>
@@ -27,7 +27,7 @@ const BlogForm = ({
           author:
           <input
             value={author}
-            name="author"
+            name='author'
             onChange={({ target }) => setAuthor(target.value)}
           />
         </div>
@@ -35,7 +35,7 @@ const BlogForm = ({
           url:
           <input
             value={url}
-            name="url"
+            name='url'
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
@@ -43,14 +43,14 @@ const BlogForm = ({
           likes:
           <input
             value={likes}
-            name="likes"
+            name='likes'
             onChange={({ target }) => setLikes(target.value)}
           />
         </div>
 
-        <button type="submit">Create</button>
+        <button type='submit'>Create</button>
       </form>
     </>
-  );
-};
-export default BlogForm;
+  )
+}
+export default BlogForm
