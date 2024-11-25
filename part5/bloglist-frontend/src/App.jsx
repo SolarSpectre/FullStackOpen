@@ -55,31 +55,16 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setBlogs([])
   }
-  const handleCreate = async (event) => {
-    event.preventDefault()
-
+  const handleCreate = async (newBlog) => {
     try {
-      const newBlog = {
-        title: title,
-        author: author,
-        url: url,
-        likes: likes,
-      }
       blogFormRef.current.toggleVisibility()
       await blogService.create(newBlog)
-      setSuccessMessage(`A new blog: ${title}, by ${author} has been created`)
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-      setLikes(0)
+      setSuccessMessage(`A new blog: ${newBlog.title}, by ${newBlog.author} has been created`)
+      setTimeout(() => setSuccessMessage(null), 5000)
+      fetchBlogs()
     } catch (error) {
       setErrorMessage('Error creating new blog')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      setTimeout(() => setErrorMessage(null), 5000)
     }
   }
 
@@ -145,32 +130,14 @@ const App = () => {
           <h2>blogs</h2>
           <p>{user.username} is logged in</p>
           <button onClick={handleLogout}>Logout</button>
-          <Togglable buttonLabel='New Blog' ref={blogFormRef}>
-            <BlogForm
-              successMessage={successMessage}
-              handleCreate={handleCreate}
-              title={title}
-              author={author}
-              url={url}
-              setTitle={setTitle}
-              setAuthor={setAuthor}
-              setUrl={setUrl}
-              likes={likes}
-              setLikes={setLikes}
-            ></BlogForm>
+          <Togglable buttonLabel="New Blog" ref={blogFormRef}>
+            <BlogForm handleCreate={handleCreate} />
           </Togglable>
           {[...blogs]
             .sort((a, b) => b.likes - a.likes)
             .map((blog) => (
               <div style={blogStyle} key={blog.id}>
-                <Blog blog={blog} />
-                <Togglable buttonLabel='view'>
-                  <p>{blog.url}</p>
-                  <p>{blog.likes}</p>
-                  <button onClick={() => handleUpdate(blog)}>like</button>
-                  <p>{user.name}</p>
-                  <button onClick={() => handleDelete(blog)}>remove</button>
-                </Togglable>
+                <Blog blog={blog} handleUpdate={handleUpdate} handleDelete={handleDelete} />
               </div>
             ))}
         </div>
