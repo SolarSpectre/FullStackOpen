@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import LoginForm from '.components/LoginForm.jsx'
+import LoginForm from './components/LoginForm'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import BlogForm from './components/CreateBlog'
@@ -68,7 +68,7 @@ const App = () => {
     }
   }
 
-  const handleUpdate = async (blog) => {
+  const handleLike = async (blog) => {
     try {
       const updatedBlog = { ...blog, likes: blog.likes + 1 }
       await blogService.update(blog.id, updatedBlog)
@@ -78,6 +78,18 @@ const App = () => {
       setTimeout(() => setErrorMessage(null), 5000)
     }
   }
+  const handleUpdate = async (updatedBlog) => {
+    try {
+      const updatedBlogFromServer = await blogService.update(updatedBlog.id, updatedBlog)
+      setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlogFromServer : b)))
+      setSuccessMessage(`Blog "${updatedBlog.title}" updated successfully`)
+      setTimeout(() => setSuccessMessage(null), 5000)
+    } catch (error) {
+      setErrorMessage('Error updating blog')
+      setTimeout(() => setErrorMessage(null), 5000)
+    }
+  }
+
   const handleDelete = async (blog) => {
     try {
       if (window.confirm(`Remote blog ${blog.title} by ${blog.author}`)) {
@@ -137,7 +149,7 @@ const App = () => {
             .sort((a, b) => b.likes - a.likes)
             .map((blog) => (
               <div style={blogStyle} key={blog.id}>
-                <Blog blog={blog} handleUpdate={handleUpdate} handleDelete={handleDelete} />
+                <Blog blog={blog} handleLike={handleLike} handleUpdate={handleUpdate} handleDelete={handleDelete} />
               </div>
             ))}
         </div>
